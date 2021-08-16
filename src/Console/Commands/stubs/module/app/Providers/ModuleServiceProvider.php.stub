@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ $namespace}}\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+/**
+ * Class {{ $module}}ServiceProvider
+ *
+ * @package {{ $namespace}}\Providers
+ */
+class {{ $module}}ServiceProvider extends ServiceProvider
+{
+    /**
+     * @return void
+     */
+    public function boot(): void
+    {
+        //
+    }
+}

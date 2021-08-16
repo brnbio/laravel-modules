@@ -53,7 +53,10 @@ class Module
      */
     public function loadRoutes(): void
     {
-        foreach (['web', 'api'] as $middleware) {
+        foreach ([
+                     'web',
+                     'api',
+                 ] as $middleware) {
             $routes = $this->getModulePath('routes/' . $middleware . '.php');
             if (is_file($routes)) {
                 Route::middleware($middleware)->group($routes);
@@ -67,17 +70,17 @@ class Module
     public function getCommands(): array
     {
         $commands = [];
-        foreach (File::allFiles($this->getModulePath('app/Console/Commands')) as $command) {
+        $commandsPath = $this->getModulePath('app/Console/Commands');
+
+        if ( !is_dir($commandsPath)) {
+            return $commands;
+        }
+
+        foreach (File::allFiles($commandsPath) as $command) {
             $command = $this->getModuleClass(
                 (string) Str::of($command)
                     ->after('app/')
-                    ->replace([
-                        '/',
-                        '.php',
-                    ], [
-                        '\\',
-                        '',
-                    ])
+                    ->replace(['/', '.php'], ['\\', ''])
             );
             if (class_exists($command)) {
                 $commands[] = $command;
