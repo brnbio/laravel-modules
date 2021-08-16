@@ -18,13 +18,17 @@ class Module
     /**
      * @var string
      */
-    public $identifier;
+    public string $identifier;
 
     /**
      * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
+    /**
+     * @param string $identifier
+     * @param array $config
+     */
     public function __construct(string $identifier, array $config = [])
     {
         $this->identifier = $identifier;
@@ -49,8 +53,12 @@ class Module
      */
     public function loadRoutes(): void
     {
-        Route::middleware('web')->group($this->getModulePath('routes/web.php'));
-        Route::middleware('api')->group($this->getModulePath('routes/api.php'));
+        foreach (['web', 'api'] as $middleware) {
+            $routes = $this->getModulePath('routes/' . $middleware . '.php');
+            if (is_file($routes)) {
+                Route::middleware($middleware)->group($routes);
+            }
+        }
     }
 
     /**
@@ -63,7 +71,13 @@ class Module
             $command = $this->getModuleClass(
                 (string) Str::of($command)
                     ->after('app/')
-                    ->replace(['/', '.php'], ['\\', ''])
+                    ->replace([
+                        '/',
+                        '.php',
+                    ], [
+                        '\\',
+                        '',
+                    ])
             );
             if (class_exists($command)) {
                 $commands[] = $command;

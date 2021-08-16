@@ -20,6 +20,10 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->publishes([
+            __DIR__ . '/config/modules.php' => config_path('modules.php'),
+        ]);
+
         /** @var Module $module */
         foreach (modules() as $module) {
             $module->loadRoutes();
@@ -46,8 +50,6 @@ class ModulesServiceProvider extends ServiceProvider
     {
         $this->commands([
             MakeModule::class,
-            // TODO: do it
-            # Setup::class, TODO: do it
         ]);
     }
 
