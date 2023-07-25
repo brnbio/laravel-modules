@@ -6,7 +6,6 @@ namespace Brnbio\Modules\Models;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 /**
  * Class Module
@@ -41,7 +40,7 @@ class Module
     public function getSeeder(): ?string
     {
         $seeder = $this->config['seeder'] ?? $this->getModuleClass('Database\\Seeders\\ModuleSeeder');
-        if ( !class_exists($seeder)) {
+        if (!class_exists($seeder)) {
             return null;
         }
 
@@ -53,10 +52,7 @@ class Module
      */
     public function loadRoutes(): void
     {
-        foreach ([
-                     'web',
-                     'api',
-                 ] as $middleware) {
+        foreach (['web', 'api'] as $middleware) {
             $routes = $this->getModulePath('routes/' . $middleware . '.php');
             if (is_file($routes)) {
                 Route::middleware($middleware)->group($routes);
@@ -72,15 +68,13 @@ class Module
         $commands = [];
         $commandsPath = $this->getModulePath('app/Console/Commands');
 
-        if ( !is_dir($commandsPath)) {
+        if (!is_dir($commandsPath)) {
             return $commands;
         }
 
         foreach (File::allFiles($commandsPath) as $command) {
             $command = $this->getModuleClass(
-                (string) Str::of($command)
-                    ->after('app/')
-                    ->replace(['/', '.php'], ['\\', ''])
+                str($command)->after('app/')->replace(['/', '.php'], ['\\', ''])->toString()
             );
             if (class_exists($command)) {
                 $commands[] = $command;

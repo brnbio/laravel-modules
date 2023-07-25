@@ -41,6 +41,7 @@ class ModulesServiceProvider extends ServiceProvider
     {
         require_once(__DIR__ . '/helpers.php');
         $this->loadCommands();
+        $this->mergeConfigFrom(__DIR__ . '/config/modules.php', 'modules');
     }
 
     /**
